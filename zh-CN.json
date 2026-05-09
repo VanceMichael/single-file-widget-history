@@ -1,0 +1,16 @@
+{
+  "title": "Regex Lab",
+  "themeToggle": "切换主题",
+  "regexPlaceholder": "输入正则表达式…",
+  "testText": "测试文本",
+  "testTextPlaceholder": "在这里输入待测试的文本…",
+  "matchHighlight": "匹配高亮",
+  "matchResults": "匹配结果",
+  "noMatch": "无匹配",
+  "matchCount": "共 {count} 次匹配",
+  "historyTitle": "历史记录",
+  "clearAll": "清空",
+  "emptyHistory": "暂无记录",
+  "langZh": "中文",
+  "langEn": "English"
+}

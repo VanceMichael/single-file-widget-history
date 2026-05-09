@@ -1,0 +1,16 @@
+{
+  "title": "Regex Lab",
+  "themeToggle": "Toggle Theme",
+  "regexPlaceholder": "Enter regex pattern…",
+  "testText": "Test Text",
+  "testTextPlaceholder": "Enter text to test…",
+  "matchHighlight": "Match Highlight",
+  "matchResults": "Match Results",
+  "noMatch": "No match",
+  "matchCount": "{count} match(es)",
+  "historyTitle": "History",
+  "clearAll": "Clear All",
+  "emptyHistory": "No records yet",
+  "langZh": "中文",
+  "langEn": "English"
+}
