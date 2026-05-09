@@ -1,0 +1,18 @@
+{
+  "title": "Regex Lab",
+  "toggleTheme": "Toggle theme",
+  "regexPlaceholder": "Enter regex pattern...",
+  "testText": "Test Text",
+  "testTextPlaceholder": "Enter test text here...",
+  "highlight": "Match Highlight",
+  "results": "Match Results",
+  "noMatch": "No matches",
+  "matchCount": "{count} match(es) found",
+  "openHistory": "Open History",
+  "closeHistory": "Close History",
+  "historyTitle": "History",
+  "historyEmpty": "No history yet",
+  "clearAll": "Clear All",
+  "deleteItem": "Delete this record",
+  "recordTip": "History is automatically saved when you modify the regex or test text"
+}
