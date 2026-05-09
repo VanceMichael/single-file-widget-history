@@ -27,14 +27,22 @@
 html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;background:var(--bg);color:var(--text);transition:background .25s,color .25s}
 body{display:flex;flex-direction:column;padding:16px 20px;gap:14px;overflow:hidden}
 
+.app-container{display:flex;flex:1;min-height:0;gap:14px;position:relative}
+.main-content{display:flex;flex-direction:column;flex:1;min-height:0;gap:14px}
+
 .header{display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.header-left{display:flex;align-items:center;gap:10px}
 .header h1{font-size:20px;font-weight:700;letter-spacing:-.3px}
-.theme-btn{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.theme-btn:hover{border-color:var(--accent)}
-.theme-btn svg{width:18px;height:18px;fill:var(--text2);transition:fill .2s}
+.header-right{display:flex;align-items:center;gap:8px}
+.history-btn,.theme-btn{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.history-btn:hover,.theme-btn:hover{border-color:var(--accent)}
+.history-btn svg,.theme-btn svg{width:18px;height:18px;fill:var(--text2);transition:fill .2s}
 [data-theme="dark"] .theme-btn .icon-sun{display:block}
 [data-theme="dark"] .theme-btn .icon-moon{display:none}
 .theme-btn .icon-sun{display:none}
+
+.lang-select{height:38px;padding:0 12px;border:1.5px solid var(--border);border-radius:19px;background:var(--surface);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;outline:none;transition:all .2s}
+.lang-select:hover{border-color:var(--accent)}
 
 .regex-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);flex-shrink:0}
 .regex-row{display:flex;gap:10px;align-items:center}
@@ -78,6 +86,35 @@ body{display:flex;flex-direction:column;padding:16px 20px;gap:14px;overflow:hidd
 .hl.g5{background:var(--g5);outline:1.5px solid rgba(94,230,226,.35);outline-offset:-1px}
 .hl.gx{background:var(--hl0);outline:1.5px solid rgba(0,113,227,.2);outline-offset:-1px}
 
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;visibility:hidden;transition:all .3s;z-index:998}
+.drawer-overlay.open{opacity:1;visibility:visible}
+
+.drawer{position:fixed;top:0;left:0;height:100%;width:320px;max-width:90vw;background:var(--surface);box-shadow:2px 0 20px rgba(0,0,0,.15);transform:translateX(-100%);transition:transform .3s ease;z-index:999;display:flex;flex-direction:column}
+.drawer.open{transform:translateX(0)}
+
+.drawer-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.drawer-header h2{font-size:17px;font-weight:600}
+.drawer-actions{display:flex;align-items:center;gap:8px}
+.clear-all-btn{padding:6px 12px;font-size:12px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text2);cursor:pointer;transition:all .2s}
+.clear-all-btn:hover{color:var(--err);border-color:var(--err)}
+.close-drawer-btn{width:32px;height:32px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:background .2s}
+.close-drawer-btn:hover{background:var(--surface2)}
+.close-drawer-btn svg{width:16px;height:16px;fill:var(--text2)}
+
+.drawer-list{flex:1;overflow-y:auto;padding:8px}
+.history-empty{padding:40px 20px;text-align:center;color:var(--text2);font-size:14px}
+.history-item{padding:12px 14px;margin-bottom:8px;background:var(--surface2);border-radius:8px;cursor:pointer;transition:all .2s;position:relative}
+.history-item:hover{background:var(--border)}
+.history-item-pattern{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:13px;color:var(--accent);font-weight:500;margin-bottom:6px;word-break:break-all;line-height:1.4;max-height:40px;overflow:hidden}
+.history-item-text{font-size:12px;color:var(--text2);word-break:break-all;line-height:1.4;max-height:36px;overflow:hidden;margin-bottom:6px}
+.history-item-meta{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text2)}
+.history-item-flags{font-family:"SF Mono",Menlo,Consolas,monospace}
+.history-item-delete{position:absolute;top:8px;right:8px;width:24px;height:24px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:4px;opacity:0;transition:all .2s}
+.history-item:hover .history-item-delete{opacity:1}
+.history-item-delete:hover{background:var(--err);opacity:1!important}
+.history-item-delete svg{width:12px;height:12px;fill:var(--text2)}
+.history-item-delete:hover svg{fill:#fff}
+
 @media(max-width:600px){
   body{padding:10px 12px;gap:10px}
   .regex-row{flex-direction:column;align-items:stretch}
@@ -87,201 +124,245 @@ body{display:flex;flex-direction:column;padding:16px 20px;gap:14px;overflow:hidd
 </head>
 <body>
 
-<div class="header">
-  <h1>Regex Lab</h1>
-  <button class="theme-btn" id="themeToggle" title="切换主题">
-    <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
-    <svg class="icon-sun" viewBox="0 0 24 24"><path d="M12 2v2m0 16v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M2 12h2m16 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42M12 6a6 6 0 100 12 6 6 0 000-12z"/></svg>
-  </button>
-</div>
-
-<div class="regex-panel">
-  <div class="regex-row">
-    <div class="regex-input-wrap">
-      <input type="text" class="regex-input" id="regexInput" placeholder="输入正则表达式…" spellcheck="false" autocomplete="off">
-    </div>
-    <div class="flags-row">
-      <label class="flag-label"><input type="checkbox" value="g" checked> g</label>
-      <label class="flag-label"><input type="checkbox" value="i"> i</label>
-      <label class="flag-label"><input type="checkbox" value="m"> m</label>
-      <label class="flag-label"><input type="checkbox" value="s"> s</label>
-      <label class="flag-label"><input type="checkbox" value="u"> u</label>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <h2 data-i18n="historyTitle">历史记录</h2>
+    <div class="drawer-actions">
+      <button class="clear-all-btn" id="clearAllBtn" data-i18n="clearAll">清空全部</button>
+      <button class="close-drawer-btn" id="closeDrawerBtn" data-i18n-title="closeHistory" title="关闭历史记录">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
     </div>
   </div>
-  <div class="err-msg" id="errMsg"></div>
+  <div class="drawer-list" id="drawerList"></div>
 </div>
 
-<div class="editor-area">
-  <div class="text-section">
-    <label>测试文本</label>
-    <textarea class="text-input" id="textInput" placeholder="在这里输入待测试的文本…" spellcheck="false"></textarea>
+<div class="app-container">
+  <div class="main-content">
+    <div class="header">
+      <div class="header-left">
+        <button class="history-btn" id="historyBtn" data-i18n-title="openHistory" title="打开历史记录">
+          <svg viewBox="0 0 24 24"><path d="M12 5v7l5 3m6-3a9 9 0 11-3-6.7"/></svg>
+        </button>
+        <h1 data-i18n="title">Regex Lab</h1>
+      </div>
+      <div class="header-right">
+        <select class="lang-select" id="langSelect">
+          <option value="zh-CN">中文</option>
+          <option value="en-US">English</option>
+        </select>
+        <button class="theme-btn" id="themeToggle" data-i18n-title="toggleTheme" title="切换主题">
+          <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24"><path d="M12 2v2m0 16v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M2 12h2m16 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42M12 6a6 6 0 100 12 6 6 0 000-12z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="regex-panel">
+      <div class="regex-row">
+        <div class="regex-input-wrap">
+          <input type="text" class="regex-input" id="regexInput" data-i18n-placeholder="regexPlaceholder" placeholder="输入正则表达式…" spellcheck="false" autocomplete="off">
+        </div>
+        <div class="flags-row">
+          <label class="flag-label"><input type="checkbox" value="g" checked> g</label>
+          <label class="flag-label"><input type="checkbox" value="i"> i</label>
+          <label class="flag-label"><input type="checkbox" value="m"> m</label>
+          <label class="flag-label"><input type="checkbox" value="s"> s</label>
+          <label class="flag-label"><input type="checkbox" value="u"> u</label>
+        </div>
+      </div>
+      <div class="err-msg" id="errMsg"></div>
+    </div>
+
+    <div class="editor-area">
+      <div class="text-section">
+        <label data-i18n="testText">测试文本</label>
+        <textarea class="text-input" id="textInput" data-i18n-placeholder="testTextPlaceholder" placeholder="在这里输入待测试的文本…" spellcheck="false"></textarea>
+      </div>
+      <div class="text-section">
+        <label data-i18n="highlight">匹配高亮</label>
+        <div class="highlight-layer" id="highlightLayer"></div>
+      </div>
+    </div>
+
+    <div class="results-section">
+      <h3 data-i18n="results">匹配结果</h3>
+      <div class="match-count" id="matchCount"></div>
+      <div class="match-list" id="matchList"></div>
+    </div>
   </div>
-  <div class="text-section">
-    <label>匹配高亮</label>
-    <div class="highlight-layer" id="highlightLayer"></div>
-  </div>
 </div>
 
-<div class="results-section">
-  <h3>匹配结果</h3>
-  <div class="match-count" id="matchCount"></div>
-  <div class="match-list" id="matchList"></div>
-</div>
+<script type="module">
+import { initI18n, setLang, getCurrentLang, onLangChange, t } from './i18n.js';
+import { initHistory, getAllHistory, deleteHistory, clearAllHistory, debouncedSaveHistory, onHistoryChange } from './history.js';
+import { initCore, restoreRecord, refreshResults, escapeHtml } from './core.js';
 
-<script>
-(function(){
-  var regexInput = document.getElementById('regexInput');
-  var textInput = document.getElementById('textInput');
-  var highlightLayer = document.getElementById('highlightLayer');
-  var matchCount = document.getElementById('matchCount');
-  var matchList = document.getElementById('matchList');
-  var errMsg = document.getElementById('errMsg');
-  var themeToggle = document.getElementById('themeToggle');
-  var flagsCheckboxes = document.querySelectorAll('.flag-label input');
+const regexInput = document.getElementById('regexInput');
+const textInput = document.getElementById('textInput');
+const highlightLayer = document.getElementById('highlightLayer');
+const matchCount = document.getElementById('matchCount');
+const matchList = document.getElementById('matchList');
+const errMsg = document.getElementById('errMsg');
+const themeToggle = document.getElementById('themeToggle');
+const flagsCheckboxes = document.querySelectorAll('.flag-label input');
+const langSelect = document.getElementById('langSelect');
+const historyBtn = document.getElementById('historyBtn');
+const drawer = document.getElementById('drawer');
+const drawerOverlay = document.getElementById('drawerOverlay');
+const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+const clearAllBtn = document.getElementById('clearAllBtn');
+const drawerList = document.getElementById('drawerList');
 
-  var GROUP_COLORS = ['g0','g1','g2','g3','g4','g5'];
+function formatTimestamp(ts) {
+  const date = new Date(ts);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
 
-  function escapeHtml(s){
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  if (diffMins < 1) return '刚刚';
+  if (diffMins < 60) return diffMins + ' 分钟前';
+  if (diffHours < 24) return diffHours + ' 小时前';
+  if (diffDays < 7) return diffDays + ' 天前';
+
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  const hh = String(date.getHours()).padStart(2, '0');
+  const mm = String(date.getMinutes()).padStart(2, '0');
+  return y + '-' + m + '-' + d + ' ' + hh + ':' + mm;
+}
+
+async function renderHistoryList() {
+  const records = await getAllHistory();
+  if (!records.length) {
+    drawerList.innerHTML = '<div class="history-empty" data-i18n="historyEmpty">' + t('historyEmpty') + '</div>';
+    return;
   }
 
-  function getFlags(){
-    var f = '';
-    flagsCheckboxes.forEach(function(cb){ if(cb.checked) f += cb.value; });
-    return f;
-  }
+  let html = '';
+  records.forEach(function (record) {
+    const patternText = record.pattern || '(empty)';
+    const textPreview = (record.text || '').replace(/\s+/g, ' ').trim() || '(empty)';
+    const flagsText = record.flags || '(no flags)';
 
-  function buildRanges(text, re){
-    var ranges = [];
-    if(re.global){
-      var m;
-      var guard = 0;
-      while((m = re.exec(text)) !== null){
-        if(++guard > 50000) break;
-        if(m[0].length === 0){ re.lastIndex++; continue; }
-        ranges.push({start:m.index, end:m.index+m[0].length, groups:m.slice(1)});
-        re.lastIndex = m.index + m[0].length;
-      }
-    } else {
-      var m = re.exec(text);
-      if(m) ranges.push({start:m.index, end:m.index+m[0].length, groups:m.slice(1)});
-    }
-    return ranges;
-  }
-
-  function renderHighlight(text, ranges){
-    if(!ranges.length){
-      highlightLayer.innerHTML = escapeHtml(text);
-      return;
-    }
-    var parts = [];
-    var last = 0;
-    for(var i=0;i<ranges.length;i++){
-      var r = ranges[i];
-      if(r.start > last) parts.push({type:'text', text:text.slice(last, r.start)});
-      var colorIdx = i % GROUP_COLORS.length;
-      parts.push({type:'hl', text:text.slice(r.start, r.end), cls:GROUP_COLORS[colorIdx]});
-      last = r.end;
-    }
-    if(last < text.length) parts.push({type:'text', text:text.slice(last)});
-
-    var html = '';
-    for(var j=0;j<parts.length;j++){
-      var p = parts[j];
-      var safe = escapeHtml(p.text);
-      if(p.type === 'hl'){
-        html += '<span class="hl '+p.cls+'">'+safe+'</span>';
-      } else {
-        html += safe;
-      }
-    }
-    highlightLayer.innerHTML = html;
-  }
-
-  function renderResults(ranges, text){
-    if(!ranges.length){
-      matchCount.textContent = '无匹配';
-      matchList.innerHTML = '';
-      return;
-    }
-    matchCount.textContent = '共 '+ranges.length+' 次匹配';
-    var html = '';
-    for(var i=0;i<ranges.length;i++){
-      var r = ranges[i];
-      var colorCls = GROUP_COLORS[i % GROUP_COLORS.length];
-      html += '<div class="match-item">';
-      html += '<span class="idx">#'+(i+1)+'</span> ';
-      html += '<span class="range">['+r.start+', '+r.end+')</span>';
-      html += ' <code>'+escapeHtml(text.slice(r.start, r.end))+'</code>';
-      if(r.groups && r.groups.length){
-        for(var g=0;g<r.groups.length;g++){
-          var gVal = r.groups[g];
-          html += '<div class="group-row">';
-          html += '<span class="group-label">$'+(g+1)+':</span> ';
-          html += gVal !== undefined ? escapeHtml(gVal) : '<span class="group-label">undefined</span>';
-          html += '</div>';
-        }
-      }
-      html += '</div>';
-    }
-    matchList.innerHTML = html;
-  }
-
-  var debounceTimer = null;
-  function run(){
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(doRun, 80);
-  }
-
-  function doRun(){
-    var pattern = regexInput.value;
-    var flags = getFlags();
-    var text = textInput.value;
-    errMsg.textContent = '';
-
-    if(!pattern){
-      highlightLayer.innerHTML = escapeHtml(text);
-      matchCount.textContent = '';
-      matchList.innerHTML = '';
-      return;
-    }
-
-    try{
-      var re = new RegExp(pattern, flags);
-    } catch(e){
-      errMsg.textContent = e.message;
-      highlightLayer.innerHTML = escapeHtml(text);
-      matchCount.textContent = '';
-      matchList.innerHTML = '';
-      return;
-    }
-
-    var ranges = buildRanges(text, re);
-    renderHighlight(text, ranges);
-    renderResults(ranges, text);
-  }
-
-  regexInput.addEventListener('input', run);
-  textInput.addEventListener('input', run);
-  flagsCheckboxes.forEach(function(cb){ cb.addEventListener('change', run); });
-
-  function setTheme(t){
-    document.documentElement.setAttribute('data-theme', t);
-    try{ localStorage.setItem('regex-lab-theme', t); } catch(e){}
-  }
-
-  themeToggle.addEventListener('click', function(){
-    var cur = document.documentElement.getAttribute('data-theme');
-    setTheme(cur === 'dark' ? 'light' : 'dark');
+    html += '<div class="history-item" data-id="' + record.id + '">';
+    html += '<div class="history-item-pattern">/' + escapeHtml(patternText) + '/' + escapeHtml(record.flags || '') + '</div>';
+    html += '<div class="history-item-text">' + escapeHtml(textPreview) + '</div>';
+    html += '<div class="history-item-meta">';
+    html += '<span class="history-item-flags">' + flagsText + '</span>';
+    html += '<span>' + formatTimestamp(record.timestamp) + '</span>';
+    html += '</div>';
+    html += '<button class="history-item-delete" data-delete-id="' + record.id + '" data-i18n-title="deleteItem" title="' + t('deleteItem') + '">';
+    html += '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+    html += '</button>';
+    html += '</div>';
   });
 
-  try{
-    var saved = localStorage.getItem('regex-lab-theme');
-    if(saved) setTheme(saved);
-  }catch(e){}
+  drawerList.innerHTML = html;
 
-  doRun();
-})();
+  drawerList.querySelectorAll('.history-item').forEach(function (item) {
+    item.addEventListener('click', async function (e) {
+      if (e.target.closest('.history-item-delete')) return;
+      const id = item.getAttribute('data-id');
+      const records = await getAllHistory();
+      const record = records.find(function (r) { return r.id === id; });
+      if (record) {
+        restoreRecord(record);
+        closeDrawer();
+      }
+    });
+  });
+
+  drawerList.querySelectorAll('.history-item-delete').forEach(function (btn) {
+    btn.addEventListener('click', async function (e) {
+      e.stopPropagation();
+      const id = btn.getAttribute('data-delete-id');
+      await deleteHistory(id);
+    });
+  });
+}
+
+function openDrawer() {
+  drawer.classList.add('open');
+  drawerOverlay.classList.add('open');
+  renderHistoryList();
+}
+
+function closeDrawer() {
+  drawer.classList.remove('open');
+  drawerOverlay.classList.remove('open');
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  try { localStorage.setItem('regex-lab-theme', theme); } catch (e) { }
+}
+
+async function main() {
+  await initI18n();
+
+  const savedLang = getCurrentLang();
+  if (langSelect) {
+    langSelect.value = savedLang;
+    langSelect.addEventListener('change', function () {
+      setLang(langSelect.value);
+    });
+  }
+
+  onLangChange(function () {
+    refreshResults();
+    if (drawer.classList.contains('open')) {
+      renderHistoryList();
+    }
+  });
+
+  await initHistory();
+
+  initCore({
+    regexInput: regexInput,
+    textInput: textInput,
+    highlightLayer: highlightLayer,
+    matchCount: matchCount,
+    matchList: matchList,
+    errMsg: errMsg,
+    flagsCheckboxes: flagsCheckboxes
+  }, function (state) {
+    debouncedSaveHistory(state);
+  });
+
+  onHistoryChange(function () {
+    if (drawer.classList.contains('open')) {
+      renderHistoryList();
+    }
+  });
+
+  if (historyBtn) historyBtn.addEventListener('click', openDrawer);
+  if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+  if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
+  if (clearAllBtn) clearAllBtn.addEventListener('click', async function () {
+    if (confirm(t('clearAll') + '?')) {
+      await clearAllHistory();
+    }
+  });
+
+  if (themeToggle) {
+    themeToggle.addEventListener('click', function () {
+      var cur = document.documentElement.getAttribute('data-theme');
+      setTheme(cur === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  try {
+    var saved = localStorage.getItem('regex-lab-theme');
+    if (saved) setTheme(saved);
+  } catch (e) { }
+}
+
+main();
 </script>
 </body>
 </html>
