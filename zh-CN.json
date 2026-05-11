@@ -1,0 +1,23 @@
+{
+  "appTitle": "Regex Lab",
+  "toggleTheme": "切换主题",
+  "toggleLanguage": "切换语言",
+  "regexPlaceholder": "输入正则表达式…",
+  "testText": "测试文本",
+  "testTextPlaceholder": "在这里输入待测试的文本…",
+  "highlight": "匹配高亮",
+  "results": "匹配结果",
+  "noMatch": "无匹配",
+  "matchCount": "共 {count} 次匹配",
+  "history": "历史记录",
+  "historyToggle": "打开历史记录",
+  "clearHistory": "清空全部",
+  "emptyHistory": "暂无历史记录",
+  "deleteRecord": "删除这条记录",
+  "flag_g_tooltip": "全局匹配",
+  "flag_i_tooltip": "忽略大小写",
+  "flag_m_tooltip": "多行模式",
+  "flag_s_tooltip": "点号匹配换行",
+  "flag_u_tooltip": "Unicode 模式",
+  "recordTime": "{time} 保存"
+}
