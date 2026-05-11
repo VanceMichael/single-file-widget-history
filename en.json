@@ -1,0 +1,23 @@
+{
+  "appTitle": "Regex Lab",
+  "toggleTheme": "Toggle theme",
+  "toggleLanguage": "Toggle language",
+  "regexPlaceholder": "Enter regex pattern…",
+  "testText": "Test Text",
+  "testTextPlaceholder": "Enter text to test here…",
+  "highlight": "Match Highlight",
+  "results": "Match Results",
+  "noMatch": "No matches",
+  "matchCount": "{count} match{plural}",
+  "history": "History",
+  "historyToggle": "Open history",
+  "clearHistory": "Clear All",
+  "emptyHistory": "No history yet",
+  "deleteRecord": "Delete this record",
+  "flag_g_tooltip": "Global match",
+  "flag_i_tooltip": "Case insensitive",
+  "flag_m_tooltip": "Multiline mode",
+  "flag_s_tooltip": "Dot matches newline",
+  "flag_u_tooltip": "Unicode mode",
+  "recordTime": "Saved at {time}"
+}
